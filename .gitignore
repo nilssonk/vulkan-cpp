@@ -1,0 +1,75 @@
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+*.gcda
+*.gcno
+*.pyc
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Latex output
+*.aux
+*.log
+*.pdf
+*.toc
+
+# Other random stuff
+*.swp
+*~
+*.d
+
+# Ninja build files
+*ninja*
+
+# Project specifics
+.vscode/
+build/
+build.*/
+*_unittest
+*_throughput
+*_conformance
+*_performance
+.compiler_command
+coverage.xml
+doxygen_warnings.txt
+tags
+log.txt
+html/
+latex/
+**/mockable.cc
+**/mockable.h
+test_detail.xml
+*CMakeCache.txt
+*CMakeFiles
+*CMakeScripts
+*Testing
+*Makefile
+*cmake_install.cmake
+*install_manifest.txt
+*compile_commands.json
+*CTestTestfile.cmake
+DartConfiguration.tcl
