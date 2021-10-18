@@ -1,5 +1,5 @@
-#ifndef VULKAN_TO_STRING_HH
-#define VULKAN_TO_STRING_HH
+#ifndef VULKAN_TO_STRING_HH_INCLUDED_
+#define VULKAN_TO_STRING_HH_INCLUDED_
 
 #include "fmt/core.h"
 #include "vulkan_helper_types.hh"
@@ -55,4 +55,4 @@ to_string(const VkPhysicalDeviceProperties & prop) -> std::string
                        patch);
 }
 
-#endif
+#endif // VULKAN_TO_STRING_HH_INCLUDED_
