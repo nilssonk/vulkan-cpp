@@ -7,7 +7,8 @@
 
 namespace vulkan {
 
-struct LogicalDeviceWrapper : HandleWrapper<VkDevice, LogicalDeviceWrapper> {
+struct LogicalDeviceWrapper final
+    : HandleWrapper<VkDevice, LogicalDeviceWrapper> {
     explicit LogicalDeviceWrapper(VkDevice dev);
 
     static auto

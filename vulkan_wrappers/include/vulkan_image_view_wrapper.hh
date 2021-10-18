@@ -13,7 +13,8 @@ struct ImageViewHandle {
     VkDevice    dev;
 };
 
-struct ImageViewWrapper : HandleWrapper<ImageViewHandle, ImageViewWrapper> {
+struct ImageViewWrapper final
+    : HandleWrapper<ImageViewHandle, ImageViewWrapper> {
     static auto
     create(VkDevice dev, VkImage image, VkFormat format)
         -> std::optional<ImageViewWrapper>;

@@ -15,7 +15,7 @@ struct SurfaceHandle {
     VkInstance   instance;
 };
 
-struct SurfaceWrapper : HandleWrapper<SurfaceHandle, SurfaceWrapper> {
+struct SurfaceWrapper final : HandleWrapper<SurfaceHandle, SurfaceWrapper> {
     static auto
     create(InstanceWrapper & vulkan, glfw::WindowWrapper & window)
         -> std::optional<SurfaceWrapper>;

@@ -11,7 +11,7 @@ struct SwapchainInstance {
     VkDevice       device;
 };
 
-class SwapchainWrapper
+class SwapchainWrapper final
     : public HandleWrapper<SwapchainInstance, SwapchainWrapper> {
     std::vector<VkImage> images_{};
     VkFormat             format_{};
