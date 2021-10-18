@@ -28,9 +28,9 @@ cd build
 3. Run CMake to configure the project
 ```
 # Debug build with clang-tidy static analysis enabled
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DVULKAN_CLANG_TIDY=ON
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DVULKAN_CLANG_TIDY=ON ../
 # Release build with LTO enabled
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DVULKAN_CLANG_TIDY=OFF -DVULKAN_LTO=ON
+cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DVULKAN_CLANG_TIDY=OFF -DVULKAN_LTO=ON ../
 ```
 4. Build using your configured build system
 ```
