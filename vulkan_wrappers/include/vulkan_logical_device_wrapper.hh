@@ -3,7 +3,12 @@
 
 #include "gsl/span"
 #include "handle_wrapper.hh"
-#include "vulkan_helper_types.hh"
+
+#include <optional>
+#include <string>
+#include <vulkan/vulkan.hpp>
+
+struct QueueFamilyIndices;
 
 namespace vulkan {
 
@@ -12,12 +17,12 @@ struct LogicalDeviceWrapper final
     explicit LogicalDeviceWrapper(VkDevice dev);
 
     static auto
-    errorMsg(const std::string & msg) -> void;
+    errorMsg(std::string const & msg) -> void;
 
     static auto
     create(VkPhysicalDevice              phys_dev,
-           const QueueFamilyIndices &    indices,
-           gsl::span<const char * const> extensions)
+           QueueFamilyIndices const &    indices,
+           gsl::span<char const * const> extensions)
         -> std::optional<LogicalDeviceWrapper>;
 
     static auto

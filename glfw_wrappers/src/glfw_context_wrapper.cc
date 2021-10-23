@@ -1,9 +1,10 @@
 #include "glfw_context_wrapper.hh"
 
 #include "fmt/core.h"
+#include "glfw_window_wrapper.hh"
 
+#include <GLFW/glfw3.h>
 #include <memory>
-#include <optional>
 
 namespace glfw {
 
@@ -60,7 +61,7 @@ ContextWrapper::createWindow() const -> std::optional<WindowWrapper>
 }
 
 auto
-ContextWrapper::getInstanceExtensions() const -> gsl::span<const char *>
+ContextWrapper::getInstanceExtensions() const -> gsl::span<char const *>
 {
     (void)this;
 

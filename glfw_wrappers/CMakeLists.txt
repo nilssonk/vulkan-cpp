@@ -13,7 +13,8 @@ target_link_libraries(vulkan_glfw_wrappers
     GSL
     PRIVATE
     vulkan_copts_common
-    fmt)
+    fmt
+    glfw)
 
 configure_lto(vulkan_glfw_wrappers)
 configure_tidy(vulkan_glfw_wrappers)

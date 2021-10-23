@@ -2,6 +2,8 @@
 
 #include "fmt/core.h"
 
+#include <GLFW/glfw3.h>
+
 namespace glfw {
 
 auto

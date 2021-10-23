@@ -10,7 +10,7 @@ namespace vulkan {
 namespace {
 
 auto
-layer_support_check(gsl::span<const char * const> enabled_layers)
+layer_support_check(gsl::span<char const * const> enabled_layers)
     -> std::error_code
 {
     uint32_t layer_count{};
@@ -50,7 +50,7 @@ layer_support_check(gsl::span<const char * const> enabled_layers)
 } // namespace
 
 auto
-InstanceWrapper::create(gsl::span<const char * const> enabled_layers)
+InstanceWrapper::create(gsl::span<char const * const> enabled_layers)
     -> std::optional<InstanceWrapper>
 {
     if (layer_support_check(enabled_layers)) {
@@ -63,12 +63,12 @@ InstanceWrapper::create(gsl::span<const char * const> enabled_layers)
     app_info.engineVersion = VK_MAKE_VERSION(0, 0, 1);
     app_info.apiVersion = VK_API_VERSION_1_0;
 
-    const auto * const glfw = glfw::ContextWrapper::get();
+    auto const * const glfw = glfw::ContextWrapper::get();
     if (glfw == nullptr) {
         return std::nullopt;
     }
 
-    const auto extensions = glfw->getInstanceExtensions();
+    auto const extensions = glfw->getInstanceExtensions();
 
     VkInstanceCreateInfo create_info{};
     create_info.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;

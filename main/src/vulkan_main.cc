@@ -9,7 +9,7 @@ namespace {
 auto
 init_window() -> std::optional<glfw::WindowWrapper>
 {
-    const auto * const glfw = glfw::ContextWrapper::get();
+    auto const * const glfw = glfw::ContextWrapper::get();
 
     if (glfw == nullptr) {
         return std::nullopt;

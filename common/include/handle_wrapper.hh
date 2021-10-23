@@ -14,8 +14,8 @@ protected:
         return handle_;
     }
 
-    constexpr auto
-    setHandle(HandleT handle) -> void
+    constexpr void
+    setHandle(HandleT handle)
     {
         handle_ = handle;
     }
@@ -23,7 +23,7 @@ protected:
 public:
     constexpr HandleWrapper() = default;
 
-    HandleWrapper(const HandleWrapper &) = delete;
+    HandleWrapper(HandleWrapper const &) = delete;
 
     constexpr HandleWrapper(HandleWrapper && other) noexcept
         : handle_{std::exchange(other.handle_, HandleT{})}
@@ -36,7 +36,7 @@ public:
     }
 
     auto
-    operator=(const HandleWrapper &) -> HandleWrapper & = delete;
+    operator=(HandleWrapper const &) -> HandleWrapper & = delete;
 
     constexpr auto
     operator=(HandleWrapper && other) noexcept -> HandleWrapper &

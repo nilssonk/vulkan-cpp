@@ -4,56 +4,9 @@
 #include "main_utility_functions.hh"
 #include "vulkan_to_string.hh"
 
+#include <GLFW/glfw3.h>
 #include <map>
-
-namespace {
-
-auto
-rate_device(VkPhysicalDeviceFeatures const &   feat,
-            VkPhysicalDeviceProperties const & prop) -> uint8_t
-{
-    uint8_t result{};
-    if (prop.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
-        result += 5;
-    }
-    result += feat.geometryShader;
-    result += feat.tessellationShader;
-
-    // @TODO: More criteria
-
-    return result;
-}
-
-auto
-choose_best_device(std::vector<VkPhysicalDevice> const & devices,
-                   PropertyMap const &                   properties,
-                   FeatureMap const & features) -> VkPhysicalDevice
-{
-    assert(!devices.empty());
-    assert(!properties.empty());
-    assert(!features.empty());
-
-    std::multimap<uint8_t, VkPhysicalDevice> scores{};
-
-    for (auto * dev : devices) {
-        auto const prop_it = properties.find(dev);
-        assert(prop_it != properties.end());
-        auto const & prop = prop_it->second;
-
-        auto const feat_it = features.find(dev);
-        assert(feat_it != features.end());
-        auto const & feat = feat_it->second;
-
-        uint8_t const score = rate_device(feat, prop);
-        fmt::print("Score: {}\n", static_cast<unsigned>(score));
-
-        scores.emplace(score, dev);
-    }
-
-    return scores.rbegin()->second;
-}
-
-} // namespace
+#include <vulkan/vulkan.hpp>
 
 VulkanApp::VulkanApp(glfw::WindowWrapper &&     window,
                      vulkan::InstanceWrapper && vulkan,
@@ -131,7 +84,7 @@ VulkanApp::createImageViews() -> bool
     auto &   swapchain = (*swapchain_);
 
     auto const & images = swapchain.getImages();
-    VkFormat     format = swapchain.geFormat();
+    VkFormat     format = swapchain.getFormat();
 
     image_views_.reserve(images.size());
     for (VkImage image : images) {

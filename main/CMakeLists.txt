@@ -7,14 +7,13 @@ add_executable(vulkan_main)
 target_sources(vulkan_main PRIVATE ${INC} ${SRC})
 target_link_libraries(vulkan_main PRIVATE
     vulkan_copts_common
-    vulkan_common
-    vulkan_glfw_wrappers
     vulkan_vulkan_wrappers
+    vulkan_glfw_wrappers
+    vulkan_common
     fmt
-    GSL
     glfw
+    GSL
     vulkan)
 
 configure_lto(vulkan_main)
 configure_tidy(vulkan_main)
-
