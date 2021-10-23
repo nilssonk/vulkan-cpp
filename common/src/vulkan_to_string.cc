@@ -37,7 +37,7 @@ to_string(QueueFamilyIndices const & ind) -> std::string
 auto
 to_string(VkPhysicalDeviceProperties const & prop) -> std::string
 {
-    auto const [major, minor, patch] = VulkanVersion::from_u32(prop.apiVersion);
+    auto const [major, minor, patch] = VulkanVersion::from(prop.apiVersion);
     return fmt::format("Device Name: {}\n"
                        "Device Type: {}\n"
                        "Device ID: {}\n"
