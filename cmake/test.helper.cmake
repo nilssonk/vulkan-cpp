@@ -1,5 +1,5 @@
 function(add_default_test TARGET_NAME)
-    if (GNB_TESTS)
+    if (VULKAN_TESTS)
         file(GLOB_RECURSE UT_SRC "unittest/*.cc")
         set(UT_NAME "${TARGET_NAME}_unittest")
         add_executable(${UT_NAME} ${UT_SRC})
