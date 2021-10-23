@@ -10,9 +10,9 @@ target_include_directories(vulkan_common PUBLIC
 target_link_libraries(vulkan_common
     PUBLIC
     vulkan
-    fmt
     PRIVATE
-    vulkan_copts_common)
+    vulkan_copts_common
+    fmt)
 
 configure_lto(vulkan_common)
 configure_tidy(vulkan_common)

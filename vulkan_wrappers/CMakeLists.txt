@@ -11,6 +11,7 @@ target_link_libraries(vulkan_vulkan_wrappers
     PUBLIC
     vulkan_common
     GSL
+    vulkan
     PRIVATE
     vulkan_copts_common
     vulkan_glfw_wrappers

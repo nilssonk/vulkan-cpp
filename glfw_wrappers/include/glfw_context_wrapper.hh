@@ -1,12 +1,13 @@
 #ifndef GLFW_CONTEXT_WRAPPER_HH_INCLUDED_
 #define GLFW_CONTEXT_WRAPPER_HH_INCLUDED_
 
-#include "glfw_window_wrapper.hh"
 #include "gsl/span"
 
 #include <optional>
 
 namespace glfw {
+
+struct WindowWrapper;
 
 class ContextWrapper {
     ContextWrapper();
@@ -29,7 +30,7 @@ public:
     createWindow() const -> std::optional<WindowWrapper>;
 
     [[nodiscard]] auto
-    getInstanceExtensions() const -> gsl::span<const char *>;
+    getInstanceExtensions() const -> gsl::span<char const *>;
 };
 
 } // namespace glfw

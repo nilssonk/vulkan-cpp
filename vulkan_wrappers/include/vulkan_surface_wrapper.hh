@@ -2,13 +2,17 @@
 #define VULKAN_SURFACE_WRAPPER_HH_INCLUDED_
 
 #include "handle_wrapper.hh"
-#include "vulkan_instance_wrapper.hh"
+
+#include <vulkan/vulkan.hpp>
+#include <optional>
 
 namespace glfw {
 struct WindowWrapper;
 } // namespace glfw
 
 namespace vulkan {
+
+struct InstanceWrapper;
 
 struct SurfaceHandle {
     VkSurfaceKHR surface;

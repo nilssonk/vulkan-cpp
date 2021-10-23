@@ -2,6 +2,7 @@
 #define VULKAN_APP_HH_INCLUDED_
 
 #include "glfw_window_wrapper.hh"
+#include "main_aliases.hh"
 #include "to_array.hh"
 #include "vulkan_helper_types.hh"
 #include "vulkan_image_view_wrapper.hh"
@@ -9,6 +10,10 @@
 #include "vulkan_logical_device_wrapper.hh"
 #include "vulkan_surface_wrapper.hh"
 #include "vulkan_swapchain_wrapper.hh"
+
+#include <optional>
+#include <unordered_map>
+#include <vector>
 
 class VulkanApp {
     static constexpr auto kRequiredExtensions =
@@ -40,7 +45,7 @@ class VulkanApp {
     createImageViews() -> bool;
 
     auto
-    loadDeviceInfo(const std::vector<VkPhysicalDevice> & devices) -> void;
+    loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices) -> void;
 
 public:
     VulkanApp(glfw::WindowWrapper &&     window,

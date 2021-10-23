@@ -2,7 +2,13 @@
 #define VULKAN_SWAPCHAIN_WRAPPER_HH_INCLUDED_
 
 #include "handle_wrapper.hh"
-#include "vulkan_helper_types.hh"
+
+#include <optional>
+#include <vector>
+#include <vulkan/vulkan.hpp>
+
+struct QueueFamilyIndices;
+struct SwapchainSupportDetails;
 
 namespace vulkan {
 
@@ -19,28 +25,28 @@ class SwapchainWrapper final
 
 public:
     [[nodiscard]] auto
-    getImages() const -> const std::vector<VkImage> &
+    getImages() const -> std::vector<VkImage> const &
     {
         return images_;
     }
 
     [[nodiscard]] auto
-    geFormat() const -> const VkFormat &
+    getFormat() const -> VkFormat const &
     {
         return format_;
     }
 
     [[nodiscard]] auto
-    getExtent() const -> const VkExtent2D &
+    getExtent() const -> VkExtent2D const &
     {
         return extent_;
     }
 
     static auto
-    create(const SwapchainSupportDetails & swapchain_details,
+    create(SwapchainSupportDetails const & swapchain_details,
            VkDevice                        dev,
            VkSurfaceKHR                    surface,
-           const QueueFamilyIndices &      indices,
+           QueueFamilyIndices const &      indices,
            VkSwapchainKHR                  old_swapchain,
            uint32_t                        width,
            uint32_t height) -> std::optional<SwapchainWrapper>;

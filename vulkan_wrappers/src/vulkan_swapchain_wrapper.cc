@@ -2,16 +2,17 @@
 
 #include "fmt/core.h"
 #include "to_array.hh"
+#include "vulkan_helper_types.hh"
 
 #include <limits>
 
 namespace vulkan {
 
 auto
-SwapchainWrapper::create(const SwapchainSupportDetails & swapchain_details,
+SwapchainWrapper::create(SwapchainSupportDetails const & swapchain_details,
                          VkDevice                        dev,
                          VkSurfaceKHR                    surface,
-                         const QueueFamilyIndices &      indices,
+                         QueueFamilyIndices const &      indices,
                          VkSwapchainKHR                  old_swapchain,
                          uint32_t                        width,
                          uint32_t height) -> std::optional<SwapchainWrapper>
@@ -30,10 +31,10 @@ SwapchainWrapper::create(const SwapchainSupportDetails & swapchain_details,
         return std::nullopt;
     }
 
-    const auto format_it =
+    auto const format_it =
         std::find_if(swapchain_details.formats.cbegin(),
                      swapchain_details.formats.cend(),
-                     [](const auto & x) {
+                     [](auto const & x) {
                          return x.format == preferred_format &&
                                 x.colorSpace == preferred_color_space;
                      });
@@ -44,10 +45,10 @@ SwapchainWrapper::create(const SwapchainSupportDetails & swapchain_details,
         return std::nullopt;
     }
 
-    const bool supports_present_mode = std::any_of(
+    bool const supports_present_mode = std::any_of(
         swapchain_details.present_modes.cbegin(),
         swapchain_details.present_modes.cend(),
-        [](const auto mode) { return mode == preferred_present_mode; });
+        [](auto const mode) { return mode == preferred_present_mode; });
 
     if (!supports_present_mode) {
         fmt::print(stderr,
@@ -55,9 +56,9 @@ SwapchainWrapper::create(const SwapchainSupportDetails & swapchain_details,
         return std::nullopt;
     }
 
-    const auto & caps = swapchain_details.capabilities;
+    auto const & caps = swapchain_details.capabilities;
 
-    const VkExtent2D extent = std::invoke([&caps, height, width] {
+    VkExtent2D const extent = std::invoke([&caps, height, width] {
         if (caps.currentExtent.width != std::numeric_limits<uint32_t>::max()) {
             return caps.currentExtent;
         }
@@ -73,7 +74,7 @@ SwapchainWrapper::create(const SwapchainSupportDetails & swapchain_details,
 
     fmt::print("Swap chain extent: {}x{}\n", extent.width, extent.height);
 
-    const uint32_t image_count = caps.minImageCount + 1;
+    uint32_t const image_count = caps.minImageCount + 1;
     if (caps.maxImageCount > 0 && image_count > caps.maxImageCount) {
         fmt::print(stderr, "Insufficient swap chain image count.\n");
         return std::nullopt;
@@ -89,7 +90,7 @@ SwapchainWrapper::create(const SwapchainSupportDetails & swapchain_details,
     create_info.imageArrayLayers = 1;
     create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-    const auto queue_family_indices =
+    auto const queue_family_indices =
         to_array({*indices.graphics_family, *indices.present_family});
     if (queue_family_indices[0] != queue_family_indices[1]) {
         fmt::print("Swap chain using concurrent sharing mode.\n");

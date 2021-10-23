@@ -3,14 +3,8 @@
 
 #include <cstdint>
 #include <optional>
-#include <unordered_map>
 #include <vector>
 #include <vulkan/vulkan.hpp>
-
-using PropertyMap =
-    std::unordered_map<VkPhysicalDevice, VkPhysicalDeviceProperties>;
-using FeatureMap =
-    std::unordered_map<VkPhysicalDevice, VkPhysicalDeviceFeatures>;
 
 struct SwapchainSupportDetails {
     VkSurfaceCapabilitiesKHR        capabilities;
