@@ -7,7 +7,7 @@ struct VulkanVersion {
     uint16_t patch;
 
     constexpr static auto
-    from_u32(uint32_t version) -> VulkanVersion
+    from(uint32_t version) -> VulkanVersion
     {
         VulkanVersion result{};
         result.major = version >> 22;

@@ -1,8 +1,8 @@
 #include "vulkan_surface_wrapper.hh"
 
-#include "vulkan_instance_wrapper.hh"
 #include "fmt/core.h"
 #include "glfw_window_wrapper.hh"
+#include "vulkan_instance_wrapper.hh"
 
 #include <GLFW/glfw3.h>
 

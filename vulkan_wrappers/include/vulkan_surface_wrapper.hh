@@ -3,8 +3,8 @@
 
 #include "handle_wrapper.hh"
 
-#include <vulkan/vulkan.hpp>
 #include <optional>
+#include <vulkan/vulkan.hpp>
 
 namespace glfw {
 struct WindowWrapper;
