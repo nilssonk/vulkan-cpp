@@ -48,6 +48,8 @@ set(VULKAN_EXTRA_CFLAGS -O3 -ffast-math -fvisibility=hidden)
 set_property(GLOBAL PROPERTY VULKAN_RELEASE_EXTRA_CFLAGS ${VULKAN_EXTRA_CFLAGS})
 
 add_library(vulkan_copts_common INTERFACE)
+target_compile_definitions(vulkan_copts_common INTERFACE
+    VULKAN_HPP_NO_EXCEPTIONS)
 target_compile_options(vulkan_copts_common INTERFACE
     -fno-exceptions
     -fno-rtti

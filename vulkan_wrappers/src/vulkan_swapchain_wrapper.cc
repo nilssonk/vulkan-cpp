@@ -34,7 +34,7 @@ SwapchainWrapper::create(SwapchainSupportDetails const & swapchain_details,
     auto const format_it =
         std::find_if(swapchain_details.formats.cbegin(),
                      swapchain_details.formats.cend(),
-                     [](auto const & x) {
+                     [=](auto const & x) {
                          return x.format == preferred_format &&
                                 x.colorSpace == preferred_color_space;
                      });
@@ -48,7 +48,7 @@ SwapchainWrapper::create(SwapchainSupportDetails const & swapchain_details,
     bool const supports_present_mode = std::any_of(
         swapchain_details.present_modes.cbegin(),
         swapchain_details.present_modes.cend(),
-        [](auto const mode) { return mode == preferred_present_mode; });
+        [=](auto const mode) { return mode == preferred_present_mode; });
 
     if (!supports_present_mode) {
         fmt::print(stderr,
