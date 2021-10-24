@@ -17,15 +17,15 @@ VulkanApp::VulkanApp(glfw::WindowWrapper &&     window,
 {
 }
 
-auto
-VulkanApp::loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices) -> void
+void
+VulkanApp::loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices)
 {
     int         device_number{1};
     std::string prop_str{"--------------- Device properties ---------------\n"};
-    for (auto * dev : devices) {
+    for (VkPhysicalDevice dev : devices) {
         // Properties
         {
-            auto [it, success] = properties_.try_emplace(dev);
+            auto const [it, success] = properties_.try_emplace(dev);
             assert(success);
 
             auto & prop = it->second;
@@ -48,6 +48,8 @@ VulkanApp::loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices) -> void
 auto
 VulkanApp::createSwapchain(VkPhysicalDevice phys_dev) -> bool
 {
+    assert(dev_.has_value() && "Must have a logical device");
+
     VkDevice dev = (*dev_).get();
 
     int width{};
@@ -80,8 +82,10 @@ VulkanApp::createSwapchain(VkPhysicalDevice phys_dev) -> bool
 auto
 VulkanApp::createImageViews() -> bool
 {
-    VkDevice dev = (*dev_).get();
-    auto &   swapchain = (*swapchain_);
+    assert(dev_.has_value() && "Must have a logical device");
+
+    VkDevice     dev = (*dev_).get();
+    auto const & swapchain = (*swapchain_);
 
     auto const & images = swapchain.getImages();
     VkFormat     format = swapchain.getFormat();
@@ -165,8 +169,8 @@ VulkanApp::loop() -> bool
     return (glfwWindowShouldClose(window_.get()) == 0);
 }
 
-auto
-VulkanApp::cleanup() -> void
+void
+VulkanApp::cleanup()
 {
     (void)this;
 }
