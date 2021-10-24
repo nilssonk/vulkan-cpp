@@ -1,0 +1,48 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "description": "Debug build using Ninja generator",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "inherits": ["debug"],
+            "name": "debug-no-clang-tidy",
+            "displayName": "Debug without clang-tidy",
+            "description": "Default build using Ninja generator but without clang-tidy",
+            "cacheVariables": {
+                "VULKAN_CLANG_TIDY": "OFF"
+            }
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "description": "Release build using Ninja generator",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "inherits": ["release"],
+            "name": "release-lto",
+            "displayName": "Release with LTO",
+            "description": "Release build using Ninja generator and LTO",
+            "cacheVariables": {
+                "VULKAN_LTO": "ON"
+            }
+        }
+    ]
+}
