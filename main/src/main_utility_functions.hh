@@ -5,12 +5,18 @@
 
 #include <algorithm>
 #include <array>
+#include <filesystem>
 #include <optional>
 #include <vector>
 #include <vulkan/vulkan.hpp>
 
 struct SwapchainSupportDetails;
 struct QueueFamilyIndices;
+
+using ShaderMap = std::unordered_map<std::string, std::vector<char>>;
+
+auto
+load_shaders_from_path(std::filesystem::path const & path) -> ShaderMap;
 
 auto
 rate_device(VkPhysicalDeviceFeatures const &   feat,

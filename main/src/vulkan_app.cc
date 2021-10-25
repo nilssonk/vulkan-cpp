@@ -158,6 +158,13 @@ VulkanApp::init() -> bool
         (void)present_queue;
     }
 
+    auto const path = std::filesystem::absolute("shaders");
+    auto const shader_map = load_shaders_from_path(path);
+    if (shader_map.empty()) {
+        fmt::print(stderr, "Found no shaders at \"{}\"\n", path.string());
+        return false;
+    }
+
     return true;
 }
 

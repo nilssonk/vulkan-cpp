@@ -3,7 +3,46 @@
 #include "fmt/core.h"
 #include "vulkan_helper_types.hh"
 
+#include <fstream>
 #include <map>
+
+auto
+load_shaders_from_path(std::filesystem::path const & path) -> ShaderMap
+{
+    namespace fs = std::filesystem;
+
+    ShaderMap result{};
+
+    if (!fs::exists(path) || !fs::is_directory(path)) {
+        return result;
+    }
+
+    auto is_spv = [](auto const & entry) {
+        return fs::is_regular_file(entry) && entry.path().extension() == ".spv";
+    };
+
+    fs::directory_iterator const dirs{path};
+
+    auto const end = fs::end(dirs);
+    auto       it = std::find_if(fs::begin(dirs), end, is_spv);
+    for (; it != end; it = std::find_if(std::next(it), end, is_spv)) {
+        auto const & entry_path = it->path();
+
+        std::ifstream f(entry_path, std::ios::binary);
+        if (f) {
+            auto const [inserted, success] =
+                result.try_emplace(entry_path.stem());
+            if (success) {
+                auto & vec = inserted->second;
+                vec.insert(vec.end(),
+                           std::istreambuf_iterator<char>(f),
+                           std::istreambuf_iterator<char>{});
+            }
+        }
+    }
+
+    return result;
+}
 
 auto
 rate_device(VkPhysicalDeviceFeatures const &   feat,
