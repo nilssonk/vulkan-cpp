@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.14)
 project(vulkan VERSION 0.1 LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/GLSL)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -87,5 +88,6 @@ add_subdirectory(3rdparty)
 
 add_subdirectory(common)
 add_subdirectory(glfw_wrappers)
+add_subdirectory(shaders)
 add_subdirectory(vulkan_wrappers)
 add_subdirectory(main)
