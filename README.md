@@ -10,6 +10,7 @@ There are a few dependencies required to build this example:
 * GLFW3 (https://github.com/glfw/glfw)
 * Vulkan headers (https://github.com/KhronosGroup/Vulkan-Headers)
 * Vulkan validation layers (https://github.com/KhronosGroup/Vulkan-ValidationLayers)
+* The glslc compiler from shaderc (https://github.com/google/shaderc)
 
 In order to run this example successfully, a working Vulkan runtime must be present and configured on your system.
 
