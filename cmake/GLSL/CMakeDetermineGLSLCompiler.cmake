@@ -1,5 +1,6 @@
-# Thanks to Florian on Stackoverflow for giving an extremely useful answer!
+# Adapted from 
 # https://stackoverflow.com/questions/38293535/generic-rule-from-makefile-to-cmake
+# Thanks to Florian for giving an extremely useful answer!
 
 if(NOT DEFINED Vulkan_GLSLC_EXECUTABLE)
     message(FATAL_ERROR "GLSLC must be present for GLSL compilation")
