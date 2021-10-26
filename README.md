@@ -37,4 +37,9 @@ cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DVULKAN_CLANG_TIDY=OFF -DVULKAN_LTO=O
 ninja
 ```
 
-If all goes well, the executable can then be found at *main/vulkan_main* inside the build directory.
+## Running the example
+The example should be run in main build directory so that it can find the compiled shader files:
+```
+# In the build directory
+main/vulkan_main
+```
