@@ -2,6 +2,7 @@
 
 #include "fmt/core.h"
 #include "main_utility_functions.hh"
+#include "vulkan_shader_module_wrapper.hh"
 #include "vulkan_to_string.hh"
 
 #include <GLFW/glfw3.h>
@@ -145,9 +146,9 @@ VulkanApp::init() -> bool
         return false;
     }
 
-    {
-        VkDevice dev = (*dev_).get();
+    VkDevice dev = (*dev_).get();
 
+    {
         VkQueue graphics_queue{};
         vkGetDeviceQueue(dev, *indices_.graphics_family, 0, &graphics_queue);
 
@@ -158,11 +159,34 @@ VulkanApp::init() -> bool
         (void)present_queue;
     }
 
-    auto const path = std::filesystem::absolute("shaders");
-    auto const shader_map = load_shaders_from_path(path);
-    if (shader_map.empty()) {
-        fmt::print(stderr, "Found no shaders at \"{}\"\n", path.string());
-        return false;
+    {
+        auto const path = std::filesystem::absolute("shaders");
+        auto const shader_map = load_shaders_from_path(path);
+        if (shader_map.empty()) {
+            fmt::print(stderr, "Found no shaders at \"{}\"\n", path.string());
+            return false;
+        }
+
+        for (auto const & [k, _] : shader_map) {
+            fmt::print("Shader: {}\n", k);
+        }
+
+        auto const vert_it = shader_map.find("simple.vert.glsl");
+        if (vert_it == shader_map.end()) {
+            return false;
+        }
+        auto const frag_it = shader_map.find("simple.frag.glsl");
+        if (frag_it == shader_map.end()) {
+            return false;
+        }
+
+        auto const vert_module =
+            vulkan::ShaderModuleWrapper::create(dev, vert_it->second);
+        auto const frag_module =
+            vulkan::ShaderModuleWrapper::create(dev, frag_it->second);
+
+        (void)frag_module;
+        (void)vert_module;
     }
 
     return true;
