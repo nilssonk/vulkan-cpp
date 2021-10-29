@@ -2,6 +2,7 @@
 
 #include "fmt/core.h"
 #include "main_utility_functions.hh"
+#include "vulkan_pipeline_wrapper.hh"
 #include "vulkan_shader_module_wrapper.hh"
 #include "vulkan_to_string.hh"
 
@@ -171,22 +172,34 @@ VulkanApp::init() -> bool
             fmt::print("Shader: {}\n", k);
         }
 
-        auto const vert_it = shader_map.find("simple.vert.glsl");
-        if (vert_it == shader_map.end()) {
-            return false;
-        }
-        auto const frag_it = shader_map.find("simple.frag.glsl");
-        if (frag_it == shader_map.end()) {
-            return false;
-        }
+        using vulkan::PipelineWrapper;
+        using vulkan::ShaderModuleWrapper;
+        using vulkan::ShaderType;
 
-        auto const vert_module =
-            vulkan::ShaderModuleWrapper::create(dev, vert_it->second);
-        auto const frag_module =
-            vulkan::ShaderModuleWrapper::create(dev, frag_it->second);
+        auto make_shader = [dev, &shader_map](ShaderType   type,
+                                              auto const & name) {
+            auto const it = shader_map.find(name);
+            return it != shader_map.end()
+                       ? ShaderModuleWrapper::create(dev, type, it->second)
+                       : std::nullopt;
+        };
+        auto maybe_vert = make_shader(ShaderType::VERT, "simple.vert.glsl");
+        auto maybe_frag = make_shader(ShaderType::FRAG, "simple.frag.glsl");
 
-        (void)frag_module;
-        (void)vert_module;
+        assert(maybe_vert.has_value());
+        assert(maybe_frag.has_value());
+        assert(swapchain_.has_value());
+
+        std::vector<ShaderModuleWrapper> shaders{};
+        shaders.push_back(std::move(*maybe_vert));
+        shaders.push_back(std::move(*maybe_frag));
+
+        auto const & swapchain = *swapchain_;
+
+        auto pipeline = vulkan::PipelineWrapper::create(dev,
+                                                        std::move(shaders),
+                                                        swapchain.getExtent(),
+                                                        swapchain.getFormat());
     }
 
     return true;

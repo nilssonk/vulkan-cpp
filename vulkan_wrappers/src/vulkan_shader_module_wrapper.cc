@@ -27,7 +27,9 @@ make_aliasing_buffer(gsl::span<FromType> data)
 }
 
 auto
-ShaderModuleWrapper::create(VkDevice device, gsl::span<char const> data)
+ShaderModuleWrapper::create(VkDevice              device,
+                            ShaderType            type,
+                            gsl::span<char const> data)
     -> std::optional<ShaderModuleWrapper>
 {
     // Prevent UB from aliasing violation by copying to a temporary buffer
@@ -40,6 +42,7 @@ ShaderModuleWrapper::create(VkDevice device, gsl::span<char const> data)
 
     ShaderModuleHandle handle{};
     handle.device = device;
+    handle.type = type;
     if (vkCreateShaderModule(device, &create_info, nullptr, &handle.module) !=
         VK_SUCCESS) {
         return std::nullopt;
@@ -62,6 +65,18 @@ ShaderModuleWrapper::closeHandle(ShaderModuleHandle handle)
                    static_cast<void *>(handle.module));
         vkDestroyShaderModule(handle.device, handle.module, nullptr);
     }
+}
+
+auto
+ShaderModuleWrapper::module() const -> VkShaderModule
+{
+    return getHandle().module;
+}
+
+auto
+ShaderModuleWrapper::type() const -> ShaderType
+{
+    return getHandle().type;
 }
 
 } // namespace vulkan
