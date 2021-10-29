@@ -9,20 +9,32 @@
 
 namespace vulkan {
 
+enum class ShaderType
+{
+    FRAG,
+    VERT
+};
+
 struct ShaderModuleHandle {
     VkDevice       device;
+    ShaderType     type;
     VkShaderModule module;
 };
 
-class ShaderModuleWrapper final
+struct ShaderModuleWrapper final
     : HandleWrapper<ShaderModuleHandle, ShaderModuleWrapper> {
-public:
     static auto
-    create(VkDevice device, gsl::span<char const> data)
+    create(VkDevice device, ShaderType type, gsl::span<char const> data)
         -> std::optional<ShaderModuleWrapper>;
 
     static void
     closeHandle(ShaderModuleHandle handle);
+
+    [[nodiscard]] auto
+    module() const -> VkShaderModule;
+
+    [[nodiscard]] auto
+    type() const -> ShaderType;
 };
 
 } // namespace vulkan
