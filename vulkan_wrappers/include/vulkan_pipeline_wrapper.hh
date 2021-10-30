@@ -23,7 +23,7 @@ class PipelineWrapper final : HandleWrapper<PipelineHandle, PipelineWrapper> {
     RenderPassWrapper                render_pass_;
 
 public:
-    static auto
+    [[nodiscard]] static auto
     create(VkDevice                            dev,
            std::vector<ShaderModuleWrapper> && shaders,
            VkExtent2D                          extent,

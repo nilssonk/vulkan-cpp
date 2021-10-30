@@ -141,8 +141,8 @@ SwapchainWrapper::create(SwapchainSupportDetails const & swapchain_details,
     return result;
 }
 
-auto
-SwapchainWrapper::closeHandle(SwapchainInstance handle) -> void
+void
+SwapchainWrapper::closeHandle(SwapchainInstance handle)
 {
     if (handle.swapchain != nullptr && handle.device != nullptr) {
         fmt::print("Destroying SwapchainKHR {}\n",

@@ -16,17 +16,17 @@ struct LogicalDeviceWrapper final
     : HandleWrapper<VkDevice, LogicalDeviceWrapper> {
     explicit LogicalDeviceWrapper(VkDevice dev);
 
-    static auto
-    errorMsg(std::string const & msg) -> void;
+    static void
+    errorMsg(std::string const & msg);
 
-    static auto
+    [[nodiscard]] static auto
     create(VkPhysicalDevice              phys_dev,
            QueueFamilyIndices const &    indices,
            gsl::span<char const * const> extensions)
         -> std::optional<LogicalDeviceWrapper>;
 
-    static auto
-    closeHandle(VkDevice handle) -> void;
+    static void
+    closeHandle(VkDevice handle);
 
     [[nodiscard]] auto
     get() const -> VkDevice;

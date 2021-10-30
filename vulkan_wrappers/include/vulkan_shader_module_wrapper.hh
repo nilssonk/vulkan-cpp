@@ -23,7 +23,7 @@ struct ShaderModuleHandle {
 
 struct ShaderModuleWrapper final
     : HandleWrapper<ShaderModuleHandle, ShaderModuleWrapper> {
-    static auto
+    [[nodiscard]] static auto
     create(VkDevice device, ShaderType type, gsl::span<char const> data)
         -> std::optional<ShaderModuleWrapper>;
 

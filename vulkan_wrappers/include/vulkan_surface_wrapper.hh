@@ -20,12 +20,12 @@ struct SurfaceHandle {
 };
 
 struct SurfaceWrapper final : HandleWrapper<SurfaceHandle, SurfaceWrapper> {
-    static auto
+    [[nodiscard]] static auto
     create(InstanceWrapper & vulkan, glfw::WindowWrapper & window)
         -> std::optional<SurfaceWrapper>;
 
-    static auto
-    closeHandle(SurfaceHandle handle) -> void;
+    static void
+    closeHandle(SurfaceHandle handle);
 
     [[nodiscard]] auto
     get() const -> VkSurfaceKHR;

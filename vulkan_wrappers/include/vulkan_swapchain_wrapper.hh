@@ -42,7 +42,7 @@ public:
         return extent_;
     }
 
-    static auto
+    [[nodiscard]] static auto
     create(SwapchainSupportDetails const & swapchain_details,
            VkDevice                        dev,
            VkSurfaceKHR                    surface,
@@ -51,8 +51,8 @@ public:
            uint32_t                        width,
            uint32_t height) -> std::optional<SwapchainWrapper>;
 
-    static auto
-    closeHandle(SwapchainInstance handle) -> void;
+    static void
+    closeHandle(SwapchainInstance handle);
 
     [[nodiscard]] auto
     get() const -> VkSwapchainKHR;
