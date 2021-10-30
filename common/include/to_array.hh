@@ -17,7 +17,7 @@ to_array_impl(T(&&a)[N], std::index_sequence<I...> /*unused*/) // NOLINT
 } // namespace detail
 
 template<class T, std::size_t N>
-constexpr auto
+[[nodiscard]] constexpr auto
 to_array(T(&&a)[N]) -> std::array<std::remove_cv_t<T>, N> // NOLINT
 {
     return detail::to_array_impl(std::forward<decltype(a)>(a),

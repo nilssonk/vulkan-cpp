@@ -10,12 +10,12 @@
 namespace vulkan {
 
 struct InstanceWrapper final : HandleWrapper<VkInstance, InstanceWrapper> {
-    static auto
+    [[nodiscard]] static auto
     create(gsl::span<char const * const> enabled_layers)
         -> std::optional<InstanceWrapper>;
 
-    static auto
-    closeHandle(VkInstance handle) -> void;
+    static void
+    closeHandle(VkInstance handle);
 
     [[nodiscard]] auto
     get() const -> VkInstance;

@@ -93,8 +93,8 @@ InstanceWrapper::create(gsl::span<char const * const> enabled_layers)
     return result;
 }
 
-auto
-InstanceWrapper::closeHandle(VkInstance handle) -> void
+void
+InstanceWrapper::closeHandle(VkInstance handle)
 {
     if (handle != nullptr) {
         fmt::print("Destroying VkInstance {}\n", static_cast<void *>(handle));
@@ -102,7 +102,7 @@ InstanceWrapper::closeHandle(VkInstance handle) -> void
     }
 }
 
-[[nodiscard]] auto
+auto
 InstanceWrapper::get() const -> VkInstance
 {
     return getHandle();

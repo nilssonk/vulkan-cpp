@@ -6,7 +6,7 @@ struct VulkanVersion {
     uint16_t minor;
     uint16_t patch;
 
-    constexpr static auto
+    [[nodiscard]] constexpr static auto
     from(uint32_t version) -> VulkanVersion
     {
         VulkanVersion result{};

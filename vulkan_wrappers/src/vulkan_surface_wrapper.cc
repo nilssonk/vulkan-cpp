@@ -29,8 +29,8 @@ SurfaceWrapper::create(InstanceWrapper & vulkan, glfw::WindowWrapper & window)
     return result;
 }
 
-auto
-SurfaceWrapper::closeHandle(SurfaceHandle handle) -> void
+void
+SurfaceWrapper::closeHandle(SurfaceHandle handle)
 {
     if (handle.instance != nullptr && handle.surface != nullptr) {
         fmt::print("Destroying VkSurface {}\n",

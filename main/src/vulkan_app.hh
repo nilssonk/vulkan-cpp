@@ -29,30 +29,30 @@ class VulkanApp {
     FeatureMap                                  features_{};
     std::vector<vulkan::ImageViewWrapper>       image_views_{};
 
-    auto
+    [[nodiscard]] auto
     init() -> bool;
 
-    auto
+    [[nodiscard]] auto
     loop() -> bool;
 
-    auto
-    cleanup() -> void;
+    void
+    cleanup();
 
-    auto
+    [[nodiscard]] auto
     createSwapchain(VkPhysicalDevice phys_dev) -> bool;
 
-    auto
+    [[nodiscard]] auto
     createImageViews() -> bool;
 
-    auto
-    loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices) -> void;
+    void
+    loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices);
 
 public:
     VulkanApp(glfw::WindowWrapper &&     window,
               vulkan::InstanceWrapper && vulkan,
               vulkan::SurfaceWrapper &&  surface);
 
-    auto
+    [[nodiscard]] auto
     run() -> int;
 };
 

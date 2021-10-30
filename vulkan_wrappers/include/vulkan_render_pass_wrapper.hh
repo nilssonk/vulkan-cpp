@@ -15,7 +15,7 @@ struct RenderPassHandle {
 
 struct RenderPassWrapper final
     : HandleWrapper<RenderPassHandle, RenderPassWrapper> {
-    static auto
+    [[nodiscard]] static auto
     create(VkDevice                                     dev,
            std::vector<VkAttachmentDescription> const & attachments,
            std::vector<VkSubpassDescription> const &    subpasses)

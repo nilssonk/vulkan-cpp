@@ -10,8 +10,8 @@ namespace glfw {
 struct WindowWrapper final : HandleWrapper<GLFWwindow *, WindowWrapper> {
     friend class ContextWrapper;
 
-    static auto
-    closeHandle(GLFWwindow * handle) -> void;
+    static void
+    closeHandle(GLFWwindow * handle);
 
     [[nodiscard]] auto
     get() const -> GLFWwindow *;

@@ -39,8 +39,8 @@ ImageViewWrapper::create(VkDevice dev, VkImage image, VkFormat format)
     return result;
 }
 
-auto
-ImageViewWrapper::closeHandle(ImageViewHandle handle) -> void
+void
+ImageViewWrapper::closeHandle(ImageViewHandle handle)
 {
     if (handle.image != nullptr && handle.dev != nullptr) {
         fmt::print("Destroying VkImageView {}\n",

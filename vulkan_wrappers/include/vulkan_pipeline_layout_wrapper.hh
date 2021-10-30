@@ -15,7 +15,7 @@ struct PipelineLayoutHandle {
 
 struct PipelineLayoutWrapper final
     : HandleWrapper<PipelineLayoutHandle, PipelineLayoutWrapper> {
-    static auto
+    [[nodiscard]] static auto
     create(VkDevice dev, VkPipelineLayoutCreateInfo const & create_info)
         -> std::optional<PipelineLayoutWrapper>;
 

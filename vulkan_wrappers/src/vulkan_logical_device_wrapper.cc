@@ -13,8 +13,8 @@ LogicalDeviceWrapper::LogicalDeviceWrapper(VkDevice dev)
     setHandle(dev);
 }
 
-auto
-LogicalDeviceWrapper::errorMsg(const std::string & msg) -> void
+void
+LogicalDeviceWrapper::errorMsg(const std::string & msg)
 {
     fmt::print(stderr, msg);
 }
@@ -68,8 +68,8 @@ LogicalDeviceWrapper::create(VkPhysicalDevice              phys_dev,
     return LogicalDeviceWrapper(log_dev);
 }
 
-auto
-LogicalDeviceWrapper::closeHandle(VkDevice handle) -> void
+void
+LogicalDeviceWrapper::closeHandle(VkDevice handle)
 {
     if (handle != nullptr) {
         fmt::print("Destroying VkDevice {}\n", static_cast<void *>(handle));

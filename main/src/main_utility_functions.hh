@@ -15,30 +15,30 @@ struct QueueFamilyIndices;
 
 using ShaderMap = std::unordered_map<std::string, std::vector<char>>;
 
-auto
+[[nodiscard]] auto
 load_shaders_from_path(std::filesystem::path const & path) -> ShaderMap;
 
-auto
+[[nodiscard]] auto
 rate_device(VkPhysicalDeviceFeatures const &   feat,
             VkPhysicalDeviceProperties const & prop) -> uint8_t;
-auto
+[[nodiscard]] auto
 choose_best_device(std::vector<VkPhysicalDevice> const & devices,
                    PropertyMap const &                   properties,
                    FeatureMap const & features) -> VkPhysicalDevice;
 
-auto
+[[nodiscard]] auto
 query_swapchain_support(VkPhysicalDevice dev, VkSurfaceKHR surface)
     -> std::optional<SwapchainSupportDetails>;
 
-auto
+[[nodiscard]] auto
 get_queue_family_indices(VkPhysicalDevice dev, VkSurfaceKHR surface)
     -> QueueFamilyIndices;
 
-auto
+[[nodiscard]] auto
 get_physical_devices(VkInstance instance) -> std::vector<VkPhysicalDevice>;
 
 template<std::size_t N>
-inline auto
+[[nodiscard]] inline auto
 check_extension_support(VkPhysicalDevice                    dev,
                         std::array<char const *, N> const & requested_extensions)
     -> bool

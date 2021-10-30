@@ -5,13 +5,13 @@
 
 struct QueueFamilyIndices;
 
-constexpr auto
+[[nodiscard]] constexpr auto
 to_string(VkPhysicalDeviceType type) -> char const *;
 
-auto
+[[nodiscard]] auto
 to_string(QueueFamilyIndices const & ind) -> std::string;
 
-auto
+[[nodiscard]] auto
 to_string(VkPhysicalDeviceProperties const & prop) -> std::string;
 
 #endif // VULKAN_TO_STRING_HH_INCLUDED_

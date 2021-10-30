@@ -15,12 +15,12 @@ struct ImageViewHandle {
 
 struct ImageViewWrapper final
     : HandleWrapper<ImageViewHandle, ImageViewWrapper> {
-    static auto
+    [[nodiscard]] static auto
     create(VkDevice dev, VkImage image, VkFormat format)
         -> std::optional<ImageViewWrapper>;
 
-    static auto
-    closeHandle(ImageViewHandle handle) -> void;
+    static void
+    closeHandle(ImageViewHandle handle);
 };
 
 } // namespace vulkan

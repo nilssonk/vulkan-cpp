@@ -6,8 +6,8 @@
 
 namespace glfw {
 
-auto
-WindowWrapper::closeHandle(GLFWwindow * handle) -> void
+void
+WindowWrapper::closeHandle(GLFWwindow * handle)
 {
     if (handle != nullptr) {
         fmt::print("Destroying GLFWwindow {}\n", static_cast<void *>(handle));
