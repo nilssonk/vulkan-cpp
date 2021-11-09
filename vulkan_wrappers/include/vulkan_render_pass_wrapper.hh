@@ -9,8 +9,8 @@
 namespace vulkan {
 
 struct RenderPassHandle {
-    VkDevice     device;
     VkRenderPass render_pass;
+    VkDevice     dev;
 };
 
 struct RenderPassWrapper final

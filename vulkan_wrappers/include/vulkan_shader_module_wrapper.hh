@@ -16,9 +16,9 @@ enum class ShaderType
 };
 
 struct ShaderModuleHandle {
-    VkDevice       device;
     ShaderType     type;
     VkShaderModule module;
+    VkDevice       dev;
 };
 
 struct ShaderModuleWrapper final

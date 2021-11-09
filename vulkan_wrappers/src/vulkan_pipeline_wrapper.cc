@@ -207,7 +207,7 @@ PipelineWrapper::create(VkDevice                            dev,
     }
 
     PipelineHandle handle{};
-    handle.device = dev;
+    handle.dev = dev;
     if (vkCreateGraphicsPipelines(
             dev, nullptr, 1, &pipeline_create_info, nullptr, &handle.pipeline) !=
         VK_SUCCESS) {
@@ -228,10 +228,10 @@ PipelineWrapper::create(VkDevice                            dev,
 void
 PipelineWrapper::closeHandle(PipelineHandle handle)
 {
-    if (handle.device != nullptr && handle.pipeline != nullptr) {
+    if (handle.dev != nullptr && handle.pipeline != nullptr) {
         fmt::print("Destroying VkPipeline {}\n",
                    static_cast<void *>(handle.pipeline));
-        vkDestroyPipeline(handle.device, handle.pipeline, nullptr);
+        vkDestroyPipeline(handle.dev, handle.pipeline, nullptr);
     }
 }
 

@@ -10,7 +10,7 @@ PipelineLayoutWrapper::create(VkDevice                           dev,
     -> std::optional<PipelineLayoutWrapper>
 {
     PipelineLayoutHandle handle{};
-    handle.device = dev;
+    handle.dev = dev;
     if (vkCreatePipelineLayout(dev, &create_info, nullptr, &handle.layout) !=
         VK_SUCCESS) {
         return std::nullopt;
@@ -28,10 +28,10 @@ PipelineLayoutWrapper::create(VkDevice                           dev,
 void
 PipelineLayoutWrapper::closeHandle(PipelineLayoutHandle handle)
 {
-    if (handle.device != nullptr && handle.layout != nullptr) {
+    if (handle.dev != nullptr && handle.layout != nullptr) {
         fmt::print("Destroying VkPipelineLayout {}\n",
                    static_cast<void *>(handle.layout));
-        vkDestroyPipelineLayout(handle.device, handle.layout, nullptr);
+        vkDestroyPipelineLayout(handle.dev, handle.layout, nullptr);
     }
 }
 

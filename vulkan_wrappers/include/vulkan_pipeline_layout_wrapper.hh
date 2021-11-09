@@ -9,8 +9,8 @@
 namespace vulkan {
 
 struct PipelineLayoutHandle {
-    VkDevice         device;
     VkPipelineLayout layout;
+    VkDevice         dev;
 };
 
 struct PipelineLayoutWrapper final
