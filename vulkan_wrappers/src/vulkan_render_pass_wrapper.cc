@@ -12,7 +12,7 @@ RenderPassWrapper::create(
     -> std::optional<RenderPassWrapper>
 {
     RenderPassHandle handle{};
-    handle.device = dev;
+    handle.dev = dev;
 
     VkRenderPassCreateInfo create_info{};
     create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -37,10 +37,10 @@ RenderPassWrapper::create(
 void
 RenderPassWrapper::closeHandle(RenderPassHandle handle)
 {
-    if (handle.device != nullptr && handle.render_pass != nullptr) {
+    if (handle.dev != nullptr && handle.render_pass != nullptr) {
         fmt::print("Destroying VkRenderPass {}\n",
                    static_cast<void *>(handle.render_pass));
-        vkDestroyRenderPass(handle.device, handle.render_pass, nullptr);
+        vkDestroyRenderPass(handle.dev, handle.render_pass, nullptr);
     }
 }
 

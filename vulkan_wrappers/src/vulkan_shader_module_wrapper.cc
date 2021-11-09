@@ -41,7 +41,7 @@ ShaderModuleWrapper::create(VkDevice              device,
     create_info.pCode = aliasing_buffer.data();
 
     ShaderModuleHandle handle{};
-    handle.device = device;
+    handle.dev = device;
     handle.type = type;
     if (vkCreateShaderModule(device, &create_info, nullptr, &handle.module) !=
         VK_SUCCESS) {
@@ -60,10 +60,10 @@ ShaderModuleWrapper::create(VkDevice              device,
 void
 ShaderModuleWrapper::closeHandle(ShaderModuleHandle handle)
 {
-    if (handle.device != nullptr && handle.module != nullptr) {
+    if (handle.dev != nullptr && handle.module != nullptr) {
         fmt::print("Destroying VkShaderModule {}\n",
                    static_cast<void *>(handle.module));
-        vkDestroyShaderModule(handle.device, handle.module, nullptr);
+        vkDestroyShaderModule(handle.dev, handle.module, nullptr);
     }
 }
 

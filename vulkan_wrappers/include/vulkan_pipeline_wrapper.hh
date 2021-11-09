@@ -13,8 +13,8 @@
 namespace vulkan {
 
 struct PipelineHandle {
-    VkDevice   device;
     VkPipeline pipeline;
+    VkDevice   dev;
 };
 
 class PipelineWrapper final : HandleWrapper<PipelineHandle, PipelineWrapper> {

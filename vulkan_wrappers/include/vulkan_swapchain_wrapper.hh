@@ -12,13 +12,13 @@ struct SwapchainSupportDetails;
 
 namespace vulkan {
 
-struct SwapchainInstance {
+struct SwapchainHandle {
     VkSwapchainKHR swapchain;
-    VkDevice       device;
+    VkDevice       dev;
 };
 
 class SwapchainWrapper final
-    : public HandleWrapper<SwapchainInstance, SwapchainWrapper> {
+    : public HandleWrapper<SwapchainHandle, SwapchainWrapper> {
     std::vector<VkImage> images_{};
     VkFormat             format_{};
     VkExtent2D           extent_{};
@@ -52,7 +52,7 @@ public:
            uint32_t height) -> std::optional<SwapchainWrapper>;
 
     static void
-    closeHandle(SwapchainInstance handle);
+    closeHandle(SwapchainHandle handle);
 
     [[nodiscard]] auto
     get() const -> VkSwapchainKHR;
