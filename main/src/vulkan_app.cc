@@ -2,6 +2,7 @@
 
 #include "fmt/core.h"
 #include "main_utility_functions.hh"
+#include "optional_monad.hh"
 #include "vulkan_image_view_wrapper.hh"
 #include "vulkan_logical_device_wrapper.hh"
 #include "vulkan_pipeline_wrapper.hh"
@@ -237,24 +238,15 @@ VulkanApp::init(WindowStage && window_stage) -> std::optional<CompletedStage>
 {
     glfwSwapInterval(1);
 
-    auto device_stage = initDevices(std::move(window_stage));
-    if (!device_stage.has_value()) {
-        return std::nullopt;
-    }
-    auto swapchain_stage = createSwapchain(std::move(*device_stage));
-    if (!swapchain_stage.has_value()) {
-        return std::nullopt;
-    }
-    auto image_view_stage = createImageViews(std::move(*swapchain_stage));
-    if (!image_view_stage.has_value()) {
-        return std::nullopt;
-    }
-    auto pipeline_stage = createPipeline(std::move(*image_view_stage));
-    if (!pipeline_stage.has_value()) {
-        return std::nullopt;
-    }
-
-    return CompletedStage{std::move(*pipeline_stage)};
+    return functional_do(
+        std::move(window_stage),
+        initDevices,
+        createSwapchain,
+        createImageViews,
+        createPipeline,
+        [](PipelineStage && pipeline_stage) -> std::optional<CompletedStage> {
+            return CompletedStage{std::move(pipeline_stage)};
+        });
 }
 
 auto
