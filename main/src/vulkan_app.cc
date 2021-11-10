@@ -2,32 +2,59 @@
 
 #include "fmt/core.h"
 #include "main_utility_functions.hh"
+#include "vulkan_image_view_wrapper.hh"
+#include "vulkan_logical_device_wrapper.hh"
 #include "vulkan_pipeline_wrapper.hh"
 #include "vulkan_shader_module_wrapper.hh"
+#include "vulkan_swapchain_wrapper.hh"
 #include "vulkan_to_string.hh"
 
 #include <GLFW/glfw3.h>
 #include <map>
 #include <vulkan/vulkan.hpp>
 
-VulkanApp::VulkanApp(glfw::WindowWrapper &&     window,
-                     vulkan::InstanceWrapper && vulkan,
-                     vulkan::SurfaceWrapper &&  surface)
-    : window_{std::move(window)},
-      vulkan_{std::move(vulkan)},
-      surface_{std::move(surface)}
-{
-}
+struct VulkanApp::DeviceStage {
+    VulkanApp::WindowStage       window_stage;
+    VkPhysicalDevice             phys_dev;
+    QueueFamilyIndices           indices;
+    vulkan::LogicalDeviceWrapper device;
+};
 
-void
+struct VulkanApp::SwapchainStage {
+    DeviceStage              device_stage;
+    vulkan::SwapchainWrapper swapchain;
+};
+
+struct VulkanApp::ImageViewStage {
+    SwapchainStage                        swapchain_stage;
+    std::vector<vulkan::ImageViewWrapper> image_views;
+};
+
+struct VulkanApp::PipelineStage {
+    ImageViewStage          image_view_stage;
+    VkQueue                 graphics_queue;
+    VkQueue                 present_queue;
+    vulkan::PipelineWrapper pipeline;
+};
+
+struct VulkanApp::CompletedStage {
+    PipelineStage pipeline_stage;
+};
+
+auto
 VulkanApp::loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices)
+    -> std::pair<PropertyMap, FeatureMap>
 {
-    int         device_number{1};
+    int device_number{1};
+
+    auto        result = std::pair<PropertyMap, FeatureMap>();
+    auto &      properties = result.first;
+    auto &      features = result.second;
     std::string prop_str{"--------------- Device properties ---------------\n"};
     for (VkPhysicalDevice dev : devices) {
         // Properties
         {
-            auto const [it, success] = properties_.try_emplace(dev);
+            auto const [it, success] = properties.try_emplace(dev);
             assert(success);
 
             auto & prop = it->second;
@@ -38,179 +65,206 @@ VulkanApp::loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices)
         }
         // Features
         {
-            auto [it, success] = features_.try_emplace(dev);
+            auto [it, success] = features.try_emplace(dev);
             assert(success);
             vkGetPhysicalDeviceFeatures(dev, &it->second);
         }
     }
     prop_str += "-------------------------------------------------\n";
     fmt::print(prop_str);
+
+    return result;
 }
 
 auto
-VulkanApp::createSwapchain(VkPhysicalDevice phys_dev) -> bool
+VulkanApp::initDevices(WindowStage && window_stage)
+    -> std::optional<DeviceStage>
 {
-    assert(dev_.has_value() && "Must have a logical device");
-
-    VkDevice dev = (*dev_).get();
-
-    int width{};
-    int height{};
-    glfwGetFramebufferSize(window_.get(), &width, &height);
-
-    auto const maybe_swapchain_support_details =
-        query_swapchain_support(phys_dev, surface_.get());
-    if (!maybe_swapchain_support_details.has_value()) {
-        fmt::print(stderr,
-                   "Vulkan: Unable to query swap chain support details.\n");
-        return false;
-    }
-    swapchain_ =
-        vulkan::SwapchainWrapper::create(*maybe_swapchain_support_details,
-                                         dev,
-                                         surface_.get(),
-                                         indices_,
-                                         VK_NULL_HANDLE,
-                                         width,
-                                         height);
-    if (!swapchain_.has_value()) {
-        fmt::print(stderr, "Vulkan: Swap chain creation failed.\n");
-        return false;
-    }
-
-    return true;
-}
-
-auto
-VulkanApp::createImageViews() -> bool
-{
-    assert(dev_.has_value() && "Must have a logical device");
-
-    VkDevice     dev = (*dev_).get();
-    auto const & swapchain = (*swapchain_);
-
-    auto const & images = swapchain.getImages();
-    VkFormat     format = swapchain.getFormat();
-
-    image_views_.reserve(images.size());
-    for (VkImage image : images) {
-        auto maybe_iv = vulkan::ImageViewWrapper::create(dev, image, format);
-        if (!maybe_iv.has_value()) {
-            return false;
-        }
-        image_views_.emplace_back(std::move(*maybe_iv));
-    }
-
-    return true;
-}
-
-auto
-VulkanApp::init() -> bool
-{
-    glfwSwapInterval(1);
-
     std::vector<VkPhysicalDevice> const devices =
-        get_physical_devices(vulkan_.get());
+        get_physical_devices(window_stage.instance.get());
 
     if (devices.empty()) {
         fmt::print(stderr, "Vulkan: No available physical devices.\n");
-        return false;
+        return std::nullopt;
     }
 
-    loadDeviceInfo(devices);
+    auto [properties, features] = loadDeviceInfo(devices);
 
     VkPhysicalDevice phys_dev =
-        choose_best_device(devices, properties_, features_);
+        choose_best_device(devices, properties, features);
 
     if (!check_extension_support(phys_dev, kRequiredExtensions)) {
         fmt::print(stderr, "Vulkan: Required extensions not supported.\n");
-        return false;
+        return std::nullopt;
     }
-    indices_ = get_queue_family_indices(phys_dev, surface_.get());
-    fmt::print(to_string(indices_));
+    auto indices =
+        get_queue_family_indices(phys_dev, window_stage.surface.get());
+    fmt::print(to_string(indices));
 
     // Create logical device
-    {
-        dev_ = vulkan::LogicalDeviceWrapper::create(
-            phys_dev, indices_, gsl::span{kRequiredExtensions});
-        if (!dev_.has_value()) {
-            fmt::print(stderr, "Vulkan: Logical device creation failed.\n");
-            return false;
-        }
+    auto dev = vulkan::LogicalDeviceWrapper::create(
+        phys_dev, indices, gsl::span{kRequiredExtensions});
+    if (!dev.has_value()) {
+        fmt::print(stderr, "Vulkan: Logical device creation failed.\n");
+        return std::nullopt;
     }
 
-    if (!createSwapchain(phys_dev)) {
-        return false;
-    }
-
-    if (!createImageViews()) {
-        return false;
-    }
-
-    VkDevice dev = (*dev_).get();
-
-    {
-        VkQueue graphics_queue{};
-        vkGetDeviceQueue(dev, *indices_.graphics_family, 0, &graphics_queue);
-
-        VkQueue present_queue{};
-        vkGetDeviceQueue(dev, *indices_.present_family, 0, &present_queue);
-
-        (void)graphics_queue;
-        (void)present_queue;
-    }
-
-    {
-        auto const path = std::filesystem::absolute("shaders");
-        auto const shader_map = load_shaders_from_path(path);
-        if (shader_map.empty()) {
-            fmt::print(stderr, "Found no shaders at \"{}\"\n", path.string());
-            return false;
-        }
-
-        for (auto const & [k, _] : shader_map) {
-            fmt::print("Shader: {}\n", k);
-        }
-
-        using vulkan::PipelineWrapper;
-        using vulkan::ShaderModuleWrapper;
-        using vulkan::ShaderType;
-
-        auto make_shader = [dev, &shader_map](ShaderType   type,
-                                              auto const & name) {
-            auto const it = shader_map.find(name);
-            return it != shader_map.end()
-                       ? ShaderModuleWrapper::create(dev, type, it->second)
-                       : std::nullopt;
-        };
-        auto maybe_vert = make_shader(ShaderType::VERT, "simple.vert.glsl");
-        auto maybe_frag = make_shader(ShaderType::FRAG, "simple.frag.glsl");
-
-        assert(maybe_vert.has_value());
-        assert(maybe_frag.has_value());
-        assert(swapchain_.has_value());
-
-        std::vector<ShaderModuleWrapper> shaders{};
-        shaders.push_back(std::move(*maybe_vert));
-        shaders.push_back(std::move(*maybe_frag));
-
-        auto const & swapchain = *swapchain_;
-
-        auto pipeline = vulkan::PipelineWrapper::create(dev,
-                                                        std::move(shaders),
-                                                        swapchain.getExtent(),
-                                                        swapchain.getFormat());
-    }
-
-    return true;
+    return DeviceStage{
+        std::move(window_stage), phys_dev, std::move(indices), std::move(*dev)};
 }
 
 auto
-VulkanApp::loop() -> bool
+VulkanApp::createSwapchain(DeviceStage && device_stage)
+    -> std::optional<SwapchainStage>
 {
+    int width{};
+    int height{};
+    glfwGetFramebufferSize(
+        device_stage.window_stage.window.get(), &width, &height);
+
+    auto * const surface = device_stage.window_stage.surface.get();
+
+    auto const maybe_swapchain_support_details =
+        query_swapchain_support(device_stage.phys_dev, surface);
+    if (!maybe_swapchain_support_details.has_value()) {
+        fmt::print(stderr,
+                   "Vulkan: Unable to query swap chain support details.\n");
+        return std::nullopt;
+    }
+
+    auto swapchain =
+        vulkan::SwapchainWrapper::create(*maybe_swapchain_support_details,
+                                         device_stage.device.get(),
+                                         surface,
+                                         device_stage.indices,
+                                         VK_NULL_HANDLE,
+                                         width,
+                                         height);
+    if (!swapchain.has_value()) {
+        fmt::print(stderr, "Vulkan: Swap chain creation failed.\n");
+        return std::nullopt;
+    }
+
+    return SwapchainStage{std::move(device_stage), std::move(*swapchain)};
+}
+
+auto
+VulkanApp::createImageViews(SwapchainStage && swapchain_stage)
+    -> std::optional<ImageViewStage>
+{
+    auto const & images = swapchain_stage.swapchain.getImages();
+    VkFormat     format = swapchain_stage.swapchain.getFormat();
+
+    std::vector<vulkan::ImageViewWrapper> image_views;
+    image_views.reserve(images.size());
+    for (VkImage image : images) {
+        auto maybe_iv = vulkan::ImageViewWrapper::create(
+            swapchain_stage.device_stage.device.get(), image, format);
+        if (!maybe_iv.has_value()) {
+            return std::nullopt;
+        }
+        image_views.emplace_back(std::move(*maybe_iv));
+    }
+
+    return ImageViewStage{std::move(swapchain_stage), std::move(image_views)};
+}
+
+auto
+VulkanApp::createPipeline(ImageViewStage && image_view_stage)
+    -> std::optional<PipelineStage>
+{
+    auto & s_swapchain = image_view_stage.swapchain_stage;
+    auto & s_device = s_swapchain.device_stage;
+
+    auto & indices = s_device.indices;
+    auto * dev = s_device.device.get();
+
+    VkQueue graphics_queue{};
+    vkGetDeviceQueue(dev, *indices.graphics_family, 0, &graphics_queue);
+
+    VkQueue present_queue{};
+    vkGetDeviceQueue(dev, *indices.present_family, 0, &present_queue);
+
+    (void)graphics_queue;
+    (void)present_queue;
+    auto const path = std::filesystem::absolute("shaders");
+    auto const shader_map = load_shaders_from_path(path);
+    if (shader_map.empty()) {
+        fmt::print(stderr, "Found no shaders at \"{}\"\n", path.string());
+        return std::nullopt;
+    }
+
+    for (auto const & [k, _] : shader_map) {
+        fmt::print("Shader: {}\n", k);
+    }
+
+    using vulkan::PipelineWrapper;
+    using vulkan::ShaderModuleWrapper;
+    using vulkan::ShaderType;
+
+    auto make_shader = [dev, &shader_map](ShaderType type, auto const & name) {
+        auto const it = shader_map.find(name);
+        return it != shader_map.end()
+                   ? ShaderModuleWrapper::create(dev, type, it->second)
+                   : std::nullopt;
+    };
+    auto maybe_vert = make_shader(ShaderType::VERT, "simple.vert.glsl");
+    auto maybe_frag = make_shader(ShaderType::FRAG, "simple.frag.glsl");
+
+    assert(maybe_vert.has_value());
+    assert(maybe_frag.has_value());
+
+    std::vector<ShaderModuleWrapper> shaders{};
+    shaders.push_back(std::move(*maybe_vert));
+    shaders.push_back(std::move(*maybe_frag));
+
+    auto const & swapchain = s_swapchain.swapchain;
+
+    auto pipeline = vulkan::PipelineWrapper::create(
+        dev, std::move(shaders), swapchain.getExtent(), swapchain.getFormat());
+    if (!pipeline.has_value()) {
+        return std::nullopt;
+    }
+
+    return PipelineStage{std::move(image_view_stage),
+                         graphics_queue,
+                         present_queue,
+                         std::move(*pipeline)};
+}
+
+auto
+VulkanApp::init(WindowStage && window_stage) -> std::optional<CompletedStage>
+{
+    glfwSwapInterval(1);
+
+    auto device_stage = initDevices(std::move(window_stage));
+    if (!device_stage.has_value()) {
+        return std::nullopt;
+    }
+    auto swapchain_stage = createSwapchain(std::move(*device_stage));
+    if (!swapchain_stage.has_value()) {
+        return std::nullopt;
+    }
+    auto image_view_stage = createImageViews(std::move(*swapchain_stage));
+    if (!image_view_stage.has_value()) {
+        return std::nullopt;
+    }
+    auto pipeline_stage = createPipeline(std::move(*image_view_stage));
+    if (!pipeline_stage.has_value()) {
+        return std::nullopt;
+    }
+
+    return CompletedStage{std::move(*pipeline_stage)};
+}
+
+auto
+VulkanApp::loop(CompletedStage & completed_stage) -> bool
+{
+    auto & window = completed_stage.pipeline_stage.image_view_stage
+                        .swapchain_stage.device_stage.window_stage.window;
     glfwPollEvents();
-    glfwSwapBuffers(window_.get());
-    return (glfwWindowShouldClose(window_.get()) == 0);
+    glfwSwapBuffers(window.get());
+    return (glfwWindowShouldClose(window.get()) == 0);
 }
 
 void
@@ -220,15 +274,16 @@ VulkanApp::cleanup()
 }
 
 auto
-VulkanApp::run() -> int
+VulkanApp::run(WindowStage && window_stage) -> int
 {
-    if (!init()) {
+    auto completed_stage = init(std::move(window_stage));
+    if (!completed_stage.has_value()) {
         return -1;
     }
 
     bool running{};
     do {
-        running = loop();
+        running = loop(*completed_stage);
     } while (running);
 
     cleanup();

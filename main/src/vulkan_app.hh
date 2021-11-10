@@ -16,44 +16,54 @@
 #include <vector>
 
 class VulkanApp {
+public:
+    struct WindowStage {
+        glfw::WindowWrapper     window;
+        vulkan::InstanceWrapper instance;
+        vulkan::SurfaceWrapper  surface;
+    };
+
+private:
+    struct DeviceStage;
+    struct SwapchainStage;
+    struct ImageViewStage;
+    struct PipelineStage;
+    struct CompletedStage;
+
     static constexpr auto kRequiredExtensions =
         to_array({VK_KHR_SWAPCHAIN_EXTENSION_NAME});
 
-    glfw::WindowWrapper                         window_;
-    vulkan::InstanceWrapper                     vulkan_;
-    vulkan::SurfaceWrapper                      surface_;
-    QueueFamilyIndices                          indices_{};
-    std::optional<vulkan::LogicalDeviceWrapper> dev_{};
-    std::optional<vulkan::SwapchainWrapper>     swapchain_{};
-    PropertyMap                                 properties_{};
-    FeatureMap                                  features_{};
-    std::vector<vulkan::ImageViewWrapper>       image_views_{};
-
-    [[nodiscard]] auto
-    init() -> bool;
-
-    [[nodiscard]] auto
-    loop() -> bool;
+    [[nodiscard]] static auto
+    loop(CompletedStage & completed_stage) -> bool;
 
     void
     cleanup();
 
-    [[nodiscard]] auto
-    createSwapchain(VkPhysicalDevice phys_dev) -> bool;
+    [[nodiscard]] static auto
+    loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices)
+        -> std::pair<PropertyMap, FeatureMap>;
 
-    [[nodiscard]] auto
-    createImageViews() -> bool;
+    [[nodiscard]] static auto
+    initDevices(WindowStage && window_stage) -> std::optional<DeviceStage>;
 
-    void
-    loadDeviceInfo(std::vector<VkPhysicalDevice> const & devices);
+    [[nodiscard]] static auto
+    createSwapchain(DeviceStage && device_stage)
+        -> std::optional<SwapchainStage>;
+
+    [[nodiscard]] static auto
+    createImageViews(SwapchainStage && swapchain_stage)
+        -> std::optional<ImageViewStage>;
+
+    [[nodiscard]] static auto
+    createPipeline(ImageViewStage && image_view_stage)
+        -> std::optional<PipelineStage>;
+
+    [[nodiscard]] static auto
+    init(WindowStage && window_stage) -> std::optional<CompletedStage>;
 
 public:
-    VulkanApp(glfw::WindowWrapper &&     window,
-              vulkan::InstanceWrapper && vulkan,
-              vulkan::SurfaceWrapper &&  surface);
-
     [[nodiscard]] auto
-    run() -> int;
+    run(WindowStage && window_stage) -> int;
 };
 
 #endif // VULKAN_APP_HH_INCLUDED_

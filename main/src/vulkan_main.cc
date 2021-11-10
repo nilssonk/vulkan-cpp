@@ -43,7 +43,8 @@ main(int /*argc*/, char ** /*argv*/) -> int
         return -1;
     }
 
-    VulkanApp app{std::move(*window), std::move(*vulkan), std::move(*surface)};
+    VulkanApp app{};
 
-    return app.run();
+    return app.run(VulkanApp::WindowStage{
+        std::move(*window), std::move(*vulkan), std::move(*surface)});
 }
