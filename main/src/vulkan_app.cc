@@ -1,8 +1,9 @@
 #include "vulkan_app.hh"
 
 #include "fmt/core.h"
+#include "functional_do.hh"
 #include "main_utility_functions.hh"
-#include "optional_monad.hh"
+#include "monad_impl_optional.hh"
 #include "vulkan_image_view_wrapper.hh"
 #include "vulkan_logical_device_wrapper.hh"
 #include "vulkan_pipeline_wrapper.hh"
@@ -239,7 +240,7 @@ VulkanApp::init(WindowStage && window_stage) -> std::optional<CompletedStage>
     glfwSwapInterval(1);
 
     return functional_do(
-        std::move(window_stage),
+        std::make_optional(std::move(window_stage)),
         initDevices,
         createSwapchain,
         createImageViews,
