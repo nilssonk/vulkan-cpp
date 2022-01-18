@@ -22,8 +22,6 @@ option(VULKAN_LTO "Build with Link-Time Optimization" OFF)
 
 if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "Debug")
 else()
-    set(VULKAN_LTO ON)
-    set(VULKAN_CLANG_TIDY OFF)
     # Disable DeathTests
     set(ENV{EXTRA_TEST_ARGS} --gtest_filter=-*DeathTest*)
 endif()
