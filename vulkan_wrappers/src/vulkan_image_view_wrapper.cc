@@ -49,4 +49,10 @@ ImageViewWrapper::closeHandle(ImageViewHandle handle)
     }
 }
 
+auto
+ImageViewWrapper::get() const -> VkImageView
+{
+    return getHandle().image;
+}
+
 } // namespace vulkan

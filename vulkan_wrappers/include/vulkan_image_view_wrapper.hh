@@ -21,6 +21,9 @@ struct ImageViewWrapper final
 
     static void
     closeHandle(ImageViewHandle handle);
+
+    [[nodiscard]] auto
+    get() const -> VkImageView;
 };
 
 } // namespace vulkan
