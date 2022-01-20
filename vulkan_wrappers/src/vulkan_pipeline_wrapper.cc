@@ -155,32 +155,22 @@ PipelineWrapper::create(VkDevice                            dev,
         return std::nullopt;
     }
 
-    VkAttachmentDescription color_attachment{};
-    {
-        auto & ca = color_attachment;
-        ca.format = format;
-        ca.samples = VK_SAMPLE_COUNT_1_BIT;
-        ca.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-        ca.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-        ca.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-        ca.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-        ca.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-        ca.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-    }
+    std::vector<VkAttachmentDescription> attachments;
+    std::vector<VkAttachmentReference>   references;
 
-    VkAttachmentReference const color_ref{
-        0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
+    VkAttachmentDescription & ca = attachments.emplace_back();
+    ca.format = format;
+    ca.samples = VK_SAMPLE_COUNT_1_BIT;
+    ca.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+    ca.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+    ca.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    ca.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
 
-    VkSubpassDescription subpass{};
-    {
-        auto & s = subpass;
-        s.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-        s.colorAttachmentCount = 1;
-        s.pColorAttachments = &color_ref;
-    }
+    VkAttachmentReference & car = references.emplace_back();
+    car.attachment = 0;
+    car.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
 
-    auto render_pass =
-        RenderPassWrapper::create(dev, {color_attachment}, {subpass});
+    auto render_pass = RenderPassWrapper::create(dev, attachments, references);
     if (!render_pass.has_value()) {
         return std::nullopt;
     }

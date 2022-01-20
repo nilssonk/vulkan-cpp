@@ -19,7 +19,7 @@ struct RenderPassWrapper final
     [[nodiscard]] static auto
     create(VkDevice                                     dev,
            std::vector<VkAttachmentDescription> const & attachments,
-           std::vector<VkSubpassDescription> const &    subpasses)
+           std::vector<VkAttachmentReference> const &   references)
         -> std::optional<RenderPassWrapper>;
 
     static void

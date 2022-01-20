@@ -8,11 +8,14 @@ auto
 RenderPassWrapper::create(
     VkDevice                                     dev,
     std::vector<VkAttachmentDescription> const & attachments,
-    std::vector<VkSubpassDescription> const &    subpasses)
+    std::vector<VkAttachmentReference> const &   references)
     -> std::optional<RenderPassWrapper>
 {
-    RenderPassHandle handle{};
-    handle.dev = dev;
+    std::vector<VkSubpassDescription> subpasses;
+    VkSubpassDescription &            subpass = subpasses.emplace_back();
+    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+    subpass.colorAttachmentCount = references.size();
+    subpass.pColorAttachments = references.data();
 
     VkRenderPassCreateInfo create_info{};
     create_info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
@@ -20,6 +23,10 @@ RenderPassWrapper::create(
     create_info.pAttachments = attachments.data();
     create_info.subpassCount = subpasses.size();
     create_info.pSubpasses = subpasses.data();
+
+    RenderPassHandle handle{};
+    handle.dev = dev;
+
     if (vkCreateRenderPass(dev, &create_info, nullptr, &handle.render_pass) !=
         VK_SUCCESS) {
         return std::nullopt;
