@@ -4,6 +4,7 @@
 #include "functional_do.hh"
 #include "main_utility_functions.hh"
 #include "monad_impl_optional.hh"
+#include "vulkan_framebuffer_wrapper.hh"
 #include "vulkan_image_view_wrapper.hh"
 #include "vulkan_logical_device_wrapper.hh"
 #include "vulkan_pipeline_wrapper.hh"
@@ -40,8 +41,13 @@ struct VulkanApp::PipelineStage {
     vulkan::PipelineWrapper pipeline;
 };
 
+struct VulkanApp::FramebufferStage {
+    PipelineStage                           pipeline_stage;
+    std::vector<vulkan::FramebufferWrapper> framebuffers;
+};
+
 struct VulkanApp::CompletedStage {
-    PipelineStage pipeline_stage;
+    FramebufferStage framebuffer_stage;
 };
 
 auto
@@ -236,26 +242,57 @@ VulkanApp::createPipeline(ImageViewStage && image_view_stage)
 }
 
 auto
+VulkanApp::createFramebuffers(PipelineStage && pipeline_stage)
+    -> std::optional<FramebufferStage>
+{
+    using vulkan::FramebufferWrapper;
+
+    auto const & s_image_view = pipeline_stage.image_view_stage;
+    auto const & s_swapchain = s_image_view.swapchain_stage;
+    auto const & s_device = s_swapchain.device_stage;
+
+    auto const & ivs = s_image_view.image_views;
+    auto * const dev = s_device.device.get();
+    auto const   extent = s_swapchain.swapchain.getExtent();
+
+    std::vector<FramebufferWrapper> framebuffers{};
+    framebuffers.reserve(ivs.size());
+    for (auto const & iv : ivs) {
+        auto fb = FramebufferWrapper::create(
+            dev, pipeline_stage.pipeline.renderPass(), iv.get(), extent);
+        if (!fb.has_value()) {
+            return std::nullopt;
+        }
+        framebuffers.push_back(std::move(*fb));
+    }
+
+    return FramebufferStage{std::move(pipeline_stage), std::move(framebuffers)};
+}
+
+auto
 VulkanApp::init(WindowStage && window_stage) -> std::optional<CompletedStage>
 {
     glfwSwapInterval(1);
 
-    return functional_do(
-        std::make_optional(std::move(window_stage)),
-        initDevices,
-        createSwapchain,
-        createImageViews,
-        createPipeline,
-        [](PipelineStage && pipeline_stage) -> std::optional<CompletedStage> {
-            return CompletedStage{std::move(pipeline_stage)};
-        });
+    return functional_do(std::make_optional(std::move(window_stage)),
+                         initDevices,
+                         createSwapchain,
+                         createImageViews,
+                         createPipeline,
+                         createFramebuffers,
+                         [](FramebufferStage && framebuffer_stage)
+                             -> std::optional<CompletedStage> {
+                             return CompletedStage{
+                                 std::move(framebuffer_stage)};
+                         });
 }
 
 auto
 VulkanApp::loop(CompletedStage & completed_stage) -> bool
 {
-    auto & window = completed_stage.pipeline_stage.image_view_stage
-                        .swapchain_stage.device_stage.window_stage.window;
+    auto & window =
+        completed_stage.framebuffer_stage.pipeline_stage.image_view_stage
+            .swapchain_stage.device_stage.window_stage.window;
     glfwPollEvents();
     glfwSwapBuffers(window.get());
     return (glfwWindowShouldClose(window.get()) == 0);

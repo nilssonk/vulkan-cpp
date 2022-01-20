@@ -28,6 +28,7 @@ private:
     struct SwapchainStage;
     struct ImageViewStage;
     struct PipelineStage;
+    struct FramebufferStage;
     struct CompletedStage;
 
     static constexpr auto kRequiredExtensions =
@@ -57,6 +58,10 @@ private:
     [[nodiscard]] static auto
     createPipeline(ImageViewStage && image_view_stage)
         -> std::optional<PipelineStage>;
+
+    [[nodiscard]] static auto
+    createFramebuffers(PipelineStage && pipeline_stage)
+        -> std::optional<FramebufferStage>;
 
     [[nodiscard]] static auto
     init(WindowStage && window_stage) -> std::optional<CompletedStage>;

@@ -1,5 +1,6 @@
 #include "vulkan_framebuffer_wrapper.hh"
 
+#include "fmt/core.h"
 #include "to_array.hh"
 
 namespace vulkan {
@@ -29,6 +30,9 @@ FramebufferWrapper::create(VkDevice     dev,
         return std::nullopt;
     }
 
+    fmt::print("Created VkFramebuffer {}\n",
+               static_cast<void *>(handle.framebuffer));
+
     auto result = std::make_optional<FramebufferWrapper>();
     (*result).setHandle(handle);
 
@@ -39,6 +43,8 @@ void
 FramebufferWrapper::closeHandle(FramebufferHandle handle)
 {
     if (handle.dev != nullptr && handle.framebuffer != nullptr) {
+        fmt::print("Destroying VkFramebuffer {}\n",
+                   static_cast<void *>(handle.framebuffer));
         vkDestroyFramebuffer(handle.dev, handle.framebuffer, nullptr);
     }
 }

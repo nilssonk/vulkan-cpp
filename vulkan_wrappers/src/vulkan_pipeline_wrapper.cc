@@ -231,4 +231,10 @@ PipelineWrapper::get() const -> VkPipeline
     return getHandle().pipeline;
 }
 
+[[nodiscard]] auto
+PipelineWrapper::renderPass() const -> VkRenderPass
+{
+    return render_pass_.get();
+}
+
 } // namespace vulkan

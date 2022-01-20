@@ -34,6 +34,9 @@ public:
 
     [[nodiscard]] auto
     get() const -> VkPipeline;
+
+    [[nodiscard]] auto
+    renderPass() const -> VkRenderPass;
 };
 
 } // namespace vulkan
