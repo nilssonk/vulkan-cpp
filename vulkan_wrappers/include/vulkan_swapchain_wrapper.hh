@@ -5,7 +5,7 @@
 
 #include <optional>
 #include <vector>
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 struct QueueFamilyIndices;
 struct SwapchainSupportDetails;

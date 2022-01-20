@@ -4,7 +4,8 @@
 #include "handle_wrapper.hh"
 
 #include <optional>
-#include <vulkan/vulkan.hpp>
+#include <vector>
+#include <vulkan/vulkan.h>
 
 namespace vulkan {
 

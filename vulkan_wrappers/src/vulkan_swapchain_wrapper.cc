@@ -4,6 +4,7 @@
 #include "to_array.hh"
 #include "vulkan_helper_types.hh"
 
+#include <algorithm>
 #include <limits>
 
 namespace vulkan {

@@ -2,7 +2,7 @@
 #define MAIN_ALIASES_HH_INCLUDED_
 
 #include <unordered_map>
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 using PropertyMap =
     std::unordered_map<VkPhysicalDevice, VkPhysicalDeviceProperties>;

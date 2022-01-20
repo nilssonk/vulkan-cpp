@@ -2,8 +2,10 @@
 
 #include "fmt/core.h"
 
+#include <cstring>
 #include <limits>
 #include <type_traits>
+#include <vector>
 
 namespace vulkan {
 

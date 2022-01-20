@@ -3,6 +3,7 @@
 #include "fmt/core.h"
 #include "vulkan_helper_types.hh"
 
+#include <cassert>
 #include <fstream>
 #include <map>
 
