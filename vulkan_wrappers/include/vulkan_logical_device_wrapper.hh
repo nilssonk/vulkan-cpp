@@ -6,7 +6,7 @@
 
 #include <optional>
 #include <string>
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 struct QueueFamilyIndices;
 

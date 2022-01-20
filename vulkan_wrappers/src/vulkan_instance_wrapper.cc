@@ -3,7 +3,9 @@
 #include "fmt/core.h"
 #include "glfw_context_wrapper.hh"
 
+#include <algorithm>
 #include <cassert>
+#include <vector>
 
 namespace vulkan {
 

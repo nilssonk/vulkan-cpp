@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <optional>
 #include <vector>
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 struct SwapchainSupportDetails {
     VkSurfaceCapabilitiesKHR        capabilities;

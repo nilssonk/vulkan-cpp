@@ -12,8 +12,9 @@
 #include "vulkan_to_string.hh"
 
 #include <GLFW/glfw3.h>
+#include <cassert>
 #include <map>
-#include <vulkan/vulkan.hpp>
+#include <vulkan/vulkan.h>
 
 struct VulkanApp::DeviceStage {
     VulkanApp::WindowStage       window_stage;

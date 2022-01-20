@@ -1,7 +1,8 @@
 #ifndef VULKAN_TO_STRING_HH_INCLUDED_
 #define VULKAN_TO_STRING_HH_INCLUDED_
 
-#include <vulkan/vulkan.hpp>
+#include <string>
+#include <vulkan/vulkan.h>
 
 struct QueueFamilyIndices;
 
