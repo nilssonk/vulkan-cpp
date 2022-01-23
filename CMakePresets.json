@@ -97,5 +97,11 @@
             "inherits": ["gcc", "release-lto"],
             "name": "gcc-release-lto"
         }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "global"
+        }
     ]
 }
