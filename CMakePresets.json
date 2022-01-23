@@ -100,8 +100,36 @@
     ],
     "buildPresets": [
         {
-            "name": "default",
-            "configurePreset": "global"
+            "name": "clang-debug",
+            "configurePreset": "clang-debug"
+        },
+        {
+            "name": "clang-debug-no-clang-tidy",
+            "configurePreset": "clang-debug-no-clang-tidy"
+        },
+        {
+            "name": "clang-release",
+            "configurePreset": "clang-release"
+        },
+        {
+            "name": "clang-release-lto",
+            "configurePreset": "clang-release-lto"
+        },
+        {
+            "name": "gcc-debug",
+            "configurePreset": "gcc-debug"
+        },
+        {
+            "name": "gcc-debug-no-clang-tidy",
+            "configurePreset": "gcc-debug-no-clang-tidy"
+        },
+        {
+            "name": "gcc-release",
+            "configurePreset": "gcc-release"
+        },
+        {
+            "name": "gcc-release-lto",
+            "configurePreset": "gcc-release-lto"
         }
     ]
 }
