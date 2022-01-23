@@ -34,31 +34,20 @@ git clone https://github.com/nilssonk/vulkan-cpp
 cd vulkan-cpp
 ```
 
-2. Create and enter the build directory
+2. Run CMake to configure and build the project using presets and ninja-build
 
 ```
-mkdir -p build
-cd build
-```
-
-3. Run CMake to configure the project
-
-```
-# Debug build with clang-tidy static analysis enabled
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DVULKAN_CLANG_TIDY=ON ../
-# Release build with LTO enabled
-cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DVULKAN_CLANG_TIDY=OFF -DVULKAN_LTO=ON ../
-```
-
-4. Build using your configured build system
-
-```
-ninja
+# Clang Debug build with clang-tidy static analysis enabled
+cmake --preset=clang-debug .
+cmake --build --preset=clang-debug
+# GCC Release build with LTO enabled
+cmake --preset=gcc-release-lto .
+cmake --build --preset=gcc-release-lto
 ```
 
 ## Running the example
 
-The example should be run in main build directory so that it can find the compiled shader files:
+The example should be run in build directory (default _${sourceDir}/build_) so that it can find the compiled shader files:
 
 ```
 # In the build directory
