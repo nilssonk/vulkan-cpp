@@ -8,6 +8,12 @@
     "configurePresets": [
         {
             "hidden": true,
+            "name": "global",
+            "binaryDir": "${sourceDir}/build",
+            "generator": "Ninja"
+        },
+        {
+            "hidden": true,
             "name": "gcc",
             "toolchainFile": "${sourceDir}/cmake/toolchain/gcc.cmake"
         },
@@ -21,8 +27,7 @@
             "name": "debug",
             "displayName": "Debug",
             "description": "Debug build using Ninja generator",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
+            "inherits": ["global"],
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
                 "VULKAN_CLANG_TIDY": "ON"
@@ -43,8 +48,7 @@
             "name": "release",
             "displayName": "Release",
             "description": "Release build using Ninja generator",
-            "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build/",
+            "inherits": ["global"],
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Release",
                 "VULKAN_CLANG_TIDY": "OFF",
