@@ -12,7 +12,7 @@ struct Monad<std::optional<T>> {
     using value_type = T;
 
     template<typename F>
-    constexpr static auto
+    [[nodiscard]] constexpr static auto
     bind(std::optional<T> && input, F && next) -> std::invoke_result_t<F, T &&>
     {
         if (!input.has_value()) {
